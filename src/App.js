@@ -1,13 +1,15 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useLayoutEffect } from "react";
 import "./App.css";
 import styled from "@emotion/styled";
-import { css } from "@emotion/core";
 import rubikVid from "./video/rubik.mp4";
 
 function App() {
   const VideoContainer = styled.div`
     width: 100%;
-    height: 250vh;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
     background: pink;
   `;
   const Video = styled.video`
@@ -15,16 +17,25 @@ function App() {
     height: 100%;
     object-fit: cover;
   `;
+  useLayoutEffect(() => {
+    const videoDom = document.querySelector("video");
 
-  let videoDom;
+    const showNewFrame = (curretPos, height) => {
+      let prevFrame = videoDom.currentTime;
+      const currentFrame = (curretPos * 5) / height;
+      console.log(prevFrame, currentFrame);
+      videoDom.currentTime = currentFrame;
+    };
 
-  useEffect(() => {
-    videoDom = document.querySelector("video");
-    console.log((videoDom.currentTime = 3.2));
-  }, []);
+    window.addEventListener("scroll", () => {
+      const body = document.body.getBoundingClientRect();
+      const height = body.bottom - body.top - videoDom.offsetHeight;
+      if (-body.top % 5 < 1) showNewFrame(-body.top, height);
+    });
+  });
 
   return (
-    <div className='App' onScroll={e => console.log(window.scrollY)}>
+    <div className='App'>
       <VideoContainer>
         <Video src={rubikVid} />
       </VideoContainer>
