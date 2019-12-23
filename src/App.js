@@ -17,19 +17,28 @@ function App() {
     height: 100%;
     object-fit: cover;
   `;
+
   useLayoutEffect(() => {
     const videoDom = document.querySelector("video");
 
+    let prevFrame = 0;
+    let currentFrame = 0;
     const showNewFrame = (curretPos, height) => {
-      let prevFrame = videoDom.currentTime;
-      const currentFrame = (curretPos * 5) / height;
-      console.log(prevFrame, currentFrame);
-      videoDom.currentTime = currentFrame;
+      currentFrame = (curretPos * 5) / height;
     };
 
+    //easing the transition from one frame to another
+    const accelamount = 0.5;
+    setInterval(() => {
+      prevFrame += (currentFrame - prevFrame) * accelamount;
+      videoDom.currentTime = prevFrame;
+    }, 100);
+
+    //eventlistener for scrolling
     window.addEventListener("scroll", () => {
       const body = document.body.getBoundingClientRect();
       const height = body.bottom - body.top - videoDom.offsetHeight;
+
       if (-body.top % 5 < 1) showNewFrame(-body.top, height);
     });
   });
