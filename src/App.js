@@ -1,6 +1,8 @@
-import React, { useEffect, useLayoutEffect } from "react";
+import React, { useLayoutEffect } from "react";
 import "./App.css";
 import styled from "@emotion/styled";
+/** @jsx jsx */
+import { css, jsx, keyframes } from "@emotion/core";
 import rubikVid from "./video/rubik.mp4";
 
 function App() {
@@ -16,6 +18,25 @@ function App() {
     width: 100%;
     height: 100%;
     object-fit: cover;
+  `;
+  const TextContainer = styled.div`
+    width: 100%;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 1;
+  `;
+  const fade = keyframes`
+    0%{
+      opacity:1;
+    }
+    50%{
+      opacity:0;
+    }
+    100%{
+      opacity:1;
+    }
   `;
 
   useLayoutEffect(() => {
@@ -40,6 +61,9 @@ function App() {
       const height = body.bottom - body.top - videoDom.offsetHeight;
 
       if (-body.top % 5 < 1) showNewFrame(-body.top, height);
+
+      const rubik = document.querySelector(".rubik");
+      rubik.style.opacity = 1 - -body.top / height;
     });
   });
 
@@ -48,6 +72,40 @@ function App() {
       <VideoContainer>
         <Video src={rubikVid} />
       </VideoContainer>
+      <TextContainer>
+        <div
+          css={css`
+            display: flex;
+            color: white;
+            justify-content: space-around;
+            position: relative;
+            top: 10px;
+          `}
+        >
+          <h1>Meet</h1>
+          <h1>The</h1>
+          <h1
+            css={css`
+              animation: ${fade} 5s ease infinite;
+            `}
+          >
+            Future...
+          </h1>
+        </div>
+        <h1
+          className='rubik'
+          css={css`
+            font-size: 5rem;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -90%);
+            color: white;
+          `}
+        >
+          Rubik
+        </h1>
+      </TextContainer>
     </div>
   );
 }
